@@ -30,39 +30,34 @@ require File.expand_path(File.dirname(__FILE__) + '/neo')
 # Your goal is to write the score method.
 
 def score(dice)
-  cien = 100
-  cincuenta = 50
-  cero = 0
-
-  unos = [1, 1, 1]
-
   dice.empty? ? 0 : scoring(dice)
 end
 
 def scoring(dice)
-  uno = []
-  dos = []
-  tres = []
-  cuatro = []
-  cinco = []
-  seis = []
+  score = 0
 
-  dice.each do |number|
-    case number
-    when 1
-      uno << number
-    when 2
-      dos << number
-    when 3
-      tres << number
-    when 4
-      cuatro << number
-    when 5
-      cinco << number
-    when 6
-      seis << number
-    end
+  one_size = dice.count(1)
+  five_size = dice.count(5)
+
+  score += main_partial_score(1, one_size, 100) if one_size > 0
+  score += main_partial_score(5, five_size, 50) if five_size > 0
+  score += second_partial_score(2, dice.count(2))
+  score += second_partial_score(3, dice.count(3))
+  score += second_partial_score(4, dice.count(4))
+  score += second_partial_score(6, dice.count(6))
+end
+
+def main_partial_score(number, size, points)
+  if size >= 3
+    partial_score = number == 1 ? 1000 : second_partial_score(number, size)
+    partial_score += (size - 3) * points
+  else
+    partial_score = size * points
   end
+end
+
+def second_partial_score(number, size)
+  size >= 3 ? number * 100 : 0
 end
 
 class AboutScoringProject < Neo::Koan
